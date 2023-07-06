@@ -6,10 +6,12 @@ import { baseURL } from './utils/constants'
 const App = () => {
 
   const [users, setUsers] = useState([]);
-  const [email, setEmail] = useState('');
-  const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [role, setRole] = useState('');
+  const [input, setInput] = useState({
+    email: '',
+    name: '',
+    password: '',
+    role: '',
+  });
   const [updateUI, setUpdateUI] = useState(false);  
   const [updateId, setUpdateId] = useState(null);
 
@@ -20,47 +22,55 @@ const App = () => {
     })
   }, [updateUI])
 
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInput((prev) => {
+      return { ...prev, [name]: value }
+    });
+  };
+
   const addUser = () => {
     axios.post(`${baseURL}/register`, 
     {
-      email: email, 
-      name: name, 
-      password: password, 
-      role: role
+      email: input.email, 
+      name: input.name, 
+      password: input.password, 
+      role: input.role
     })
     .then((res) => {
       console.log(res.data);
-      setEmail('');
-      setName('');
-      setPassword('');
-      setRole('');
       setUpdateUI((prevState) => !prevState);
+      setInput({
+        email: '',
+        name: '',
+        password: '',
+        role: ''
+      });
     });
   }
 
   const updateMode = (id, email, name, password, role) => {
-    setEmail(email);
-    setName(name);
-    setPassword(password);
-    setRole(role);
-    setUpdateId(id)
+    setInput({ email, name, password, role });
+    setUpdateId(id);
   }
 
   const updateUser = () => {
     axios.put(`${baseURL}/update/${updateId}`, {
-      email: email,
-      name: name,
-      password: password,
-      role: role
+      email: input.email,
+      name: input.name,
+      password: input.password,
+      role: input.role
     })
     .then((res) => {
       console.log(res.data);
       setUpdateUI((prevState) => !prevState);
       setUpdateId(null);
-      setEmail('');
-      setName('');
-      setPassword('');
-      setRole('');
+      setInput({
+        email: '',
+        name: '',
+        password: '',
+        role: ''
+      });
     })
   }
   
@@ -69,28 +79,32 @@ const App = () => {
       <h1>MERN CRUD</h1>
       <div className="input__holder">
         <input 
-          type="text" 
-          value={ email } 
+          type="text"
+          name='email'
+          value={ input.email } 
           placeholder='email'
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={handleChange}
         />
         <input 
           type="text" 
-          value={ name } 
+          name='name'
+          value={ input.name } 
           placeholder='name'
-          onChange={(e) => setName(e.target.value)}
+          onChange={handleChange}
         />
         <input 
-          type="text" 
-          value={ password } 
+          type="text"
+          name='password'
+          value={ input.password } 
           placeholder='password'
-          onChange={(e) => setPassword(e.target.value)}
+          onChange={handleChange}
         />
         <input 
-          type="text" 
-          value={ role } 
+          type="text"
+          name='role'
+          value={ input.role } 
           placeholder='role'
-          onChange={(e) => setRole(e.target.value)}
+          onChange={handleChange}
         />
         <button 
           type='submit'
