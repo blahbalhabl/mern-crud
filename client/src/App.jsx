@@ -1,9 +1,15 @@
 import React, { useEffect, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import UserList from './components/usersList'
 import { baseURL } from './utils/constants'
+import { useAuthUser, useSignOut } from 'react-auth-kit'
 
 const App = () => {
+
+  const auth = useAuthUser();
+  const signOut = useSignOut();
+  const navigate = useNavigate();
 
   const [users, setUsers] = useState([]);
   const [input, setInput] = useState({
@@ -16,7 +22,7 @@ const App = () => {
   const [updateId, setUpdateId] = useState(null);
 
   useEffect(() => {
-    axios.get(`${baseURL}/users`)
+    axios.get(`${baseURL}/users`,)
     .then((res) => {
       setUsers(res.data);
     })
@@ -73,10 +79,15 @@ const App = () => {
       });
     })
   }
+
+  const logout = () => {
+    signOut();
+  }
   
   return (
     <div>
       <h1>MERN CRUD</h1>
+      <h2>{`Hello ${auth().email} welcome to registering dashboard`}</h2>
       <div className="input__holder">
         <input 
           type="text"
@@ -127,6 +138,9 @@ const App = () => {
           />
         ))}
       </ul>
+
+      <Link to='/login'>Login</Link>
+      <button onClick={logout}>Sign Out</button>
     </div>
   )
 }
